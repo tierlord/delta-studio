@@ -1,7 +1,10 @@
 #include "../include/yds_input_system.h"
 
 #include "../include/yds_window_system.h"
+#ifdef _WIN32
 #include "../include/yds_windows_input_system.h"
+#endif
+#include "../include/yds_sdl_input_system.h"
 
 ysInputSystem::ysInputSystem() : ysWindowSystemObject("INPUT_SYSTEM", Platform::Unknown) {
     m_windowSystem = nullptr;
@@ -26,8 +29,15 @@ ysError ysInputSystem::CreateInputSystem(ysInputSystem **newInputSystem, Platfor
     if (platform == Platform::Unknown) return YDS_ERROR_RETURN_STATIC(ysError::InvalidParameter);
 
     switch (platform) {
+#ifdef _WIN32
     case Platform::Windows:
         *newInputSystem = new ysWindowsInputSystem();
+        break;
+#endif
+    case Platform::SDL:
+        *newInputSystem = new ysSDLInputSystem();
+        break;
+    default:
         break;
     }
 

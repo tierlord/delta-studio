@@ -1,6 +1,7 @@
 #ifndef YDS_DYNAMIC_ARRAY_H
 #define YDS_DYNAMIC_ARRAY_H
 
+#include "yds_platform.h"
 #include "yds_error_codes.h"
 #include "yds_allocator.h"
 

@@ -1,5 +1,6 @@
 #include "../include/yds_timing.h"
 
+#ifdef _WIN32
 #include <windows.h>
 #include <mmsystem.h>
 
@@ -7,10 +8,14 @@
 
 static bool qpcFlag;
 static LARGE_INTEGER qpcFrequency;
+#else
+#include <time.h>
+#endif
 
 ysTimingSystem *ysTimingSystem::g_instance = nullptr;
 
 uint64_t SystemTime() {
+#ifdef _WIN32
     if (qpcFlag) {
         LARGE_INTEGER currentTime;
         QueryPerformanceCounter(&currentTime);
@@ -24,6 +29,12 @@ uint64_t SystemTime() {
         // Convert output to microseconds
         return (uint64_t)(timeGetTime() * 1000);
     }
+#else
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+
+    return (uint64_t)now.tv_sec * 1000000 + (uint64_t)now.tv_nsec / 1000;
+#endif
 }
 
 ysTimingSystem::ysTimingSystem() {
@@ -39,12 +50,20 @@ uint64_t ysTimingSystem::GetTime() {
     return SystemTime();
 }
 
-inline unsigned __int64 SystemClock() {
+inline uint64_t SystemClock() {
+#ifdef _WIN32
     return __rdtsc();
+#else
+    // There is no portable cycle counter, so use a nanosecond clock instead
+    struct timespec now;
+    clock_gettime(CLOCK_MONOTONIC, &now);
+
+    return (uint64_t)now.tv_sec * 1000000000ull + (uint64_t)now.tv_nsec;
+#endif
 }
 
-unsigned __int64 ysTimingSystem::GetClock() {
-    return (unsigned long long) SystemClock();
+uint64_t ysTimingSystem::GetClock() {
+    return (uint64_t)SystemClock();
 }
 
 void ysTimingSystem::SetPrecisionMode(Precision mode) {
@@ -89,7 +108,9 @@ void ysTimingSystem::Update() {
 }
 
 void ysTimingSystem::Initialize() {
+#ifdef _WIN32
     qpcFlag = (QueryPerformanceFrequency(&qpcFrequency) > 0);
+#endif
 
     m_frameNumber = 0;
 

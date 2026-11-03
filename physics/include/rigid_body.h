@@ -30,7 +30,7 @@ namespace dphysics {
         ~RigidBody();
 
         // Interfaces
-        CollisionGeometry CollisionGeometry;
+        dphysics::CollisionGeometry CollisionGeometry;
         ysTransform Transform;
 
         void Integrate(float timeStep);

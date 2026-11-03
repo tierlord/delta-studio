@@ -3,7 +3,11 @@
 
 #include "yds_audio_file.h"
 
+#ifdef _WIN32
 #include <Windows.h>
+#else
+#include <stdio.h>
+#endif
 
 class ysWindowsAudioWaveFile : public ysAudioFile {
 public:
@@ -16,7 +20,11 @@ public:
 protected:
     virtual Error GenericRead(SampleOffset offset, SampleOffset size, void *buffer);
 
+#ifdef _WIN32
     HMMIO m_fileHandle;
+#else
+    FILE *m_fileHandle;
+#endif
     unsigned int m_dataSegmentOffset;
 };
 

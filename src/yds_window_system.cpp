@@ -1,7 +1,10 @@
 #include "../include/yds_window_system.h"
 
 #include "../include/yds_input_system.h"
+#ifdef _WIN32
 #include "../include/yds_windows_window_system.h"
+#endif
+#include "../include/yds_sdl_window_system.h"
 
 ysWindowSystem *ysWindowSystem::g_instance = nullptr;
 
@@ -45,8 +48,13 @@ ysError ysWindowSystem::CreateWindowSystem(ysWindowSystem **newSystem, Platform 
     if (g_instance != nullptr) return YDS_ERROR_RETURN_STATIC(ysError::MultipleErrorSystems);
 
     switch (platform) {
+#ifdef _WIN32
     case Platform::Windows:
         *newSystem = new ysWindowsWindowSystem();
+        break;
+#endif
+    case Platform::SDL:
+        *newSystem = new ysSDLWindowSystem();
         break;
     default:
         break;

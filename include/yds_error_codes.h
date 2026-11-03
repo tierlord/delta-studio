@@ -88,6 +88,8 @@ enum class ysError {
     NoDeviceList,
     CouldNotRegisterForInput,
     NoWindowSystem,
+    CouldNotCreateWindow,
+    CouldNotOpenAudioDevice,
 
     // Audio System
     BufferAlreadyLocked,

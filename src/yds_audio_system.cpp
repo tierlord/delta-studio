@@ -1,7 +1,10 @@
 #include "../include/yds_audio_system.h"
 
 #include "../include/yds_audio_device.h"
+#ifdef _WIN32
 #include "../include/yds_ds8_system.h"
+#endif
+#include "../include/yds_sdl_audio.h"
 
 ysAudioSystem::ysAudioSystem() : ysAudioSystemObject("AUDIO_SYSTEM", API::Undefined) {
     /* void */
@@ -24,8 +27,13 @@ ysError ysAudioSystem::CreateAudioSystem(ysAudioSystem **newAudioSystem, API api
     if (api == API::Undefined) return YDS_ERROR_RETURN_STATIC(ysError::InvalidParameter);
 
     switch (api) {
+#ifdef _WIN32
     case API::DirectSound8:
         *newAudioSystem = new ysDS8System;
+        break;
+#endif
+    case API::SDL:
+        *newAudioSystem = new ysSDLAudioSystem;
         break;
     default:
         *newAudioSystem = nullptr;

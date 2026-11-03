@@ -1,7 +1,5 @@
 #include "../include/rigid_body_system.h"
 
-#include <process.h>
-#include <Windows.h>
 #include <ctime>
 #include <assert.h>
 

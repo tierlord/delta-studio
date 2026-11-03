@@ -107,8 +107,8 @@ int dphysics::CollisionDetector::CircleBoxCollision(Collision *collisions, Rigid
     ysVector relativePosition = ysMath::Sub(circle->Position, box->Position);
     relativePosition = ysMath::QuatTransformInverse(box->Orientation, relativePosition);
 
-    float closestX = min(max(ysMath::GetX(relativePosition), -box->HalfWidth), box->HalfWidth);
-    float closestY = min(max(ysMath::GetY(relativePosition), -box->HalfHeight), box->HalfHeight);
+    float closestX = std::min(std::max(ysMath::GetX(relativePosition), -box->HalfWidth), box->HalfWidth);
+    float closestY = std::min(std::max(ysMath::GetY(relativePosition), -box->HalfHeight), box->HalfHeight);
 
     ysVector closestPoint = ysMath::LoadVector(closestX, closestY, ysMath::GetZ(relativePosition));
     ysVector realPosition = ysMath::QuatTransform(box->Orientation, closestPoint);
@@ -203,7 +203,7 @@ int dphysics::CollisionDetector::RayCircleCollision(Collision *collisions, Rigid
     if (t1 < 0 && t2 < 0) return false;
     else if (t1 < 0) closest = t2;
     else if (t2 < 0) closest = t1;
-    else closest = min(t1, t2);
+    else closest = std::min(t1, t2);
 
     collisions[0].m_body1 = body1;
     collisions[0].m_body2 = body2;
@@ -333,7 +333,7 @@ int dphysics::CollisionDetector::BoxBoxVertexPenetration(
         : FLT_MAX;
     if (penetration0 < smallestPenetration || penetration1 < smallestPenetration) {
         normal = ysMath::LoadVector(0.0f, 1.0f, 0.0f);
-        smallestPenetration = min(penetration0, penetration1);
+        smallestPenetration = std::min(penetration0, penetration1);
 
         if (penetration0 != FLT_MAX && penetration1 != FLT_MAX && abs(penetration0 - penetration1) < ParallelEpsilon) {
             vertex = order_y[0];
@@ -356,7 +356,7 @@ int dphysics::CollisionDetector::BoxBoxVertexPenetration(
         : FLT_MAX;
     if (penetration0 < smallestPenetration || penetration1 < smallestPenetration) {
         normal = ysMath::LoadVector(0.0f, -1.0f, 0.0f);
-        smallestPenetration = min(penetration0, penetration1);
+        smallestPenetration = std::min(penetration0, penetration1);
 
         if (penetration0 != FLT_MAX && penetration1 != FLT_MAX && abs(penetration0 - penetration1) < ParallelEpsilon) {
             vertex = order_y[3];
@@ -379,7 +379,7 @@ int dphysics::CollisionDetector::BoxBoxVertexPenetration(
         : FLT_MAX;
     if (penetration0 < smallestPenetration || penetration1 < smallestPenetration) {
         normal = ysMath::LoadVector(-1.0f, 0.0f, 0.0f);
-        smallestPenetration = min(penetration0, penetration1);
+        smallestPenetration = std::min(penetration0, penetration1);
 
         if (penetration0 != FLT_MAX && penetration1 != FLT_MAX && abs(penetration0 - penetration1) < ParallelEpsilon) {
             vertex = order_x[3];
@@ -402,7 +402,7 @@ int dphysics::CollisionDetector::BoxBoxVertexPenetration(
         : FLT_MAX;
     if (penetration0 < smallestPenetration || penetration1 < smallestPenetration) {
         normal = ysMath::LoadVector(1.0f, 0.0f, 0.0f);
-        smallestPenetration = min(penetration0, penetration1);
+        smallestPenetration = std::min(penetration0, penetration1);
 
         if (penetration0 != FLT_MAX && penetration1 != FLT_MAX && abs(penetration0 - penetration1) < ParallelEpsilon) {
             vertex = order_x[0];

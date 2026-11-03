@@ -3,6 +3,8 @@
 
 #include "yds_base.h"
 
+class ysWindow;
+
 // Window Event Handler
 class ysWindowEventHandler : public ysObject {
     friend class ysWindow;

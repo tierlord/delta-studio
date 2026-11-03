@@ -1,6 +1,8 @@
 #ifndef YDS_MATH_H
 #define YDS_MATH_H
 
+#include "yds_platform.h"
+
 #include <xmmintrin.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -118,7 +120,7 @@ struct ysMatrix33 {
     };
 };
 
-#define YS_MATH_CONST extern const __declspec(selectany)
+#define YS_MATH_CONST extern const YDS_SELECTANY
 
 namespace ysMath {
 
@@ -185,7 +187,7 @@ namespace ysMath {
     int UniformRandomInt(int range);
 
     // Vector/General Quaternion
-    __forceinline ysGeneric LoadScalar(float s) {
+    YDS_FORCEINLINE ysGeneric LoadScalar(float s) {
         return _mm_set_ps(s, s, s, s);
     }
 
@@ -200,24 +202,24 @@ namespace ysMath {
     ysVector4 GetVector4(const ysVector &v);
     ysVector3 GetVector3(const ysVector &v);
     ysVector2 GetVector2(const ysVector &v);
-    __forceinline float GetScalar(const ysVector &v) {
-        return v.m128_f32[0];
+    YDS_FORCEINLINE float GetScalar(const ysVector &v) {
+        return ((const float *)&v)[0];
     }
 
-    __forceinline float GetX(const ysVector &v) {
-        return v.m128_f32[0];
+    YDS_FORCEINLINE float GetX(const ysVector &v) {
+        return ((const float *)&v)[0];
     }
 
-    __forceinline float GetY(const ysVector &v) {
-        return v.m128_f32[1];
+    YDS_FORCEINLINE float GetY(const ysVector &v) {
+        return ((const float *)&v)[1];
     }
 
-    __forceinline float GetZ(const ysVector &v) {
-        return v.m128_f32[2];
+    YDS_FORCEINLINE float GetZ(const ysVector &v) {
+        return ((const float *)&v)[2];
     }
 
-    __forceinline float GetW(const ysVector &v) {
-        return v.m128_f32[3];
+    YDS_FORCEINLINE float GetW(const ysVector &v) {
+        return ((const float *)&v)[3];
     }
 
     float GetQuatX(const ysQuaternion &v);
@@ -225,27 +227,27 @@ namespace ysMath {
     float GetQuatZ(const ysQuaternion &v);
     float GetQuatW(const ysQuaternion &v);
 
-    __forceinline ysGeneric Add(const ysGeneric &v1, const ysGeneric &v2) {
+    YDS_FORCEINLINE ysGeneric Add(const ysGeneric &v1, const ysGeneric &v2) {
         return _mm_add_ps(v1, v2);
     }
 
-    __forceinline ysGeneric Sub(const ysGeneric &v1, const ysGeneric &v2) {
+    YDS_FORCEINLINE ysGeneric Sub(const ysGeneric &v1, const ysGeneric &v2) {
         return _mm_sub_ps(v1, v2);
     }
 
-    __forceinline ysGeneric Mul(const ysGeneric &v1, const ysGeneric &v2) {
+    YDS_FORCEINLINE ysGeneric Mul(const ysGeneric &v1, const ysGeneric &v2) {
         return _mm_mul_ps(v1, v2);
     }
 
-    __forceinline ysGeneric Div(const ysGeneric &v1, const ysGeneric &v2) {
+    YDS_FORCEINLINE ysGeneric Div(const ysGeneric &v1, const ysGeneric &v2) {
         return _mm_div_ps(v1, v2);
     }
 
-    __forceinline ysGeneric Sqrt(const ysGeneric &v) {
+    YDS_FORCEINLINE ysGeneric Sqrt(const ysGeneric &v) {
         return _mm_sqrt_ps(v);
     }
 
-    __forceinline ysVector Dot(const ysVector &v1, const ysVector &v2) {
+    YDS_FORCEINLINE ysVector Dot(const ysVector &v1, const ysVector &v2) {
         ysVector t0 = _mm_mul_ps(v1, v2);
         ysVector t1 = _mm_shuffle_ps(t0, t0, _MM_SHUFFLE(1, 0, 3, 2));
         ysVector t2 = _mm_add_ps(t0, t1);
@@ -257,23 +259,23 @@ namespace ysMath {
     ysVector Dot3(const ysVector &v1, const ysVector &v2);
     ysVector Cross(const ysVector &v1, const ysVector &v2);
 
-    __forceinline ysVector MagnitudeSquared3(const ysVector &v) {
+    YDS_FORCEINLINE ysVector MagnitudeSquared3(const ysVector &v) {
         ysVector selfDot = ysMath::Dot3(v, v);
 
         return selfDot;
     }
 
-    __forceinline ysVector Magnitude(const ysVector &v) {
+    YDS_FORCEINLINE ysVector Magnitude(const ysVector &v) {
         ysVector selfDot = ysMath::Dot(v, v);
 
         return _mm_sqrt_ps(selfDot);
     }
 
-    __forceinline ysVector Normalize(const ysVector &v) {
+    YDS_FORCEINLINE ysVector Normalize(const ysVector &v) {
         return ysMath::Div(v, ysMath::Magnitude(v));
     }
 
-    __forceinline ysVector Negate(const ysVector &v) {
+    YDS_FORCEINLINE ysVector Negate(const ysVector &v) {
         return ysMath::Mul(v, ysMath::Constants::Negate);
     }
 

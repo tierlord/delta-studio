@@ -1,6 +1,7 @@
 #ifndef YDS_QUEUE_H
 #define YDS_QUEUE_H
 
+#include "yds_platform.h"
 #include <stdlib.h>
 
 template<typename Type, int InitialSize = 0, int Alignment = 1>
@@ -41,7 +42,7 @@ public:
 
     Type *GetBuffer() { return m_array; }
 
-    __forceinline Type &operator[](int index) {
+    YDS_FORCEINLINE Type &operator[](int index) {
         return m_array[(index + m_start) % m_maxSize];
     }
 

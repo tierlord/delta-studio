@@ -1,6 +1,7 @@
 #ifndef YDS_EXPANDING_ARRAY_H
 #define YDS_EXPANDING_ARRAY_H
 
+#include "yds_platform.h"
 #include "yds_allocator.h"
 
 #include <stdlib.h>
@@ -122,7 +123,7 @@ public:
 
     TYPE *GetBuffer() { return m_array; }
 
-    __forceinline TYPE &operator[](int index) {
+    YDS_FORCEINLINE TYPE &operator[](int index) {
         return m_array[index];
     }
 

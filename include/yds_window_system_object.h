@@ -7,6 +7,7 @@ class ysWindowSystemObject : public ysObject {
 public:
     enum class Platform {
         Windows,
+        SDL,
         Unknown,
     };
 

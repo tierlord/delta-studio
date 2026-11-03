@@ -1,6 +1,7 @@
 // TEMP
+#ifdef _WIN32
 #include <Windows.h>
-#include <WinBase.h>
+#endif
 
 #include "../include/yds_error_system.h"
 

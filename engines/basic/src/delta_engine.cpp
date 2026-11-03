@@ -99,7 +99,15 @@ ysError dbasic::DeltaEngine::CreateGameWindow(const GameEngineSettings &settings
     YDS_ERROR_DECLARE("CreateGameWindow");
 
     // Create the window system
-    YDS_NESTED_ERROR_CALL(ysWindowSystem::CreateWindowSystem(&m_windowSystem, ysWindowSystemObject::Platform::Windows));
+#ifdef _WIN32
+    const ysWindowSystemObject::Platform platform = ysWindowSystemObject::Platform::Windows;
+    const ysAudioSystem::API audioAPI = ysAudioSystem::API::DirectSound8;
+#else
+    const ysWindowSystemObject::Platform platform = ysWindowSystemObject::Platform::SDL;
+    const ysAudioSystem::API audioAPI = ysAudioSystem::API::SDL;
+#endif
+
+    YDS_NESTED_ERROR_CALL(ysWindowSystem::CreateWindowSystem(&m_windowSystem, platform));
     m_windowSystem->ConnectInstance(settings.Instance);
 
     // Find the monitor setup
@@ -117,7 +125,7 @@ ysError dbasic::DeltaEngine::CreateGameWindow(const GameEngineSettings &settings
         mainMonitor));
     m_gameWindow->AttachEventHandler(&m_windowHandler);
 
-    YDS_NESTED_ERROR_CALL(ysInputSystem::CreateInputSystem(&m_inputSystem, ysWindowSystemObject::Platform::Windows));
+    YDS_NESTED_ERROR_CALL(ysInputSystem::CreateInputSystem(&m_inputSystem, platform));
     m_windowSystem->AssignInputSystem(m_inputSystem);
     m_inputSystem->Initialize();
 
@@ -129,7 +137,7 @@ ysError dbasic::DeltaEngine::CreateGameWindow(const GameEngineSettings &settings
     YDS_NESTED_ERROR_CALL(m_device->InitializeDevice());
 
     // Create the audio device
-    YDS_NESTED_ERROR_CALL(ysAudioSystem::CreateAudioSystem(&m_audioSystem, ysAudioSystem::API::DirectSound8));
+    YDS_NESTED_ERROR_CALL(ysAudioSystem::CreateAudioSystem(&m_audioSystem, audioAPI));
     m_audioSystem->EnumerateDevices();
     m_audioDevice = m_audioSystem->GetPrimaryDevice();
     m_audioSystem->ConnectDevice(m_audioDevice, m_gameWindow);
@@ -244,6 +252,10 @@ ysError dbasic::DeltaEngine::Destroy() {
     YDS_NESTED_ERROR_CALL(m_device->DestroyGPUBuffer(m_mainVertexBuffer));
     YDS_NESTED_ERROR_CALL(m_device->DestroyGPUBuffer(m_consoleShaderObjectVariablesBuffer)); 
 
+    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_shaderProgram));
+    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_consoleProgram));
+    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_skinnedShaderProgram));
+
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_vertexShader));
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_vertexSkinnedShader));
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_consoleVertexShader));
@@ -252,10 +264,6 @@ ysError dbasic::DeltaEngine::Destroy() {
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_pixelShader));
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_saqPixelShader));
     YDS_NESTED_ERROR_CALL(m_device->DestroyShader(m_consolePixelShader));
-
-    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_shaderProgram));
-    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_consoleProgram));
-    YDS_NESTED_ERROR_CALL(m_device->DestroyShaderProgram(m_skinnedShaderProgram));
 
     YDS_NESTED_ERROR_CALL(m_device->DestroyInputLayout(m_inputLayout));
     YDS_NESTED_ERROR_CALL(m_device->DestroyInputLayout(m_skinnedInputLayout));

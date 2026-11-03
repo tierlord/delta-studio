@@ -183,7 +183,7 @@ int ysGeometryExportFile::PackVertexData(ysObjectData *object, int maxBonesPerVe
     char *location = data;
 
     for (int vert = 0; vert < object->m_objectStatistics.NumVertices; ++vert) {
-        ysVector3 &vertex = object->m_vertices[vert]; 
+        const ysVector3 vertex = object->m_vertices[vert];
 
         WriteFloatToBuffer(vertex.x, &location);
         WriteFloatToBuffer(vertex.y, &location);
@@ -205,7 +205,7 @@ int ysGeometryExportFile::PackVertexData(ysObjectData *object, int maxBonesPerVe
         }
 
         if (object->m_normals.IsActive()) {
-            ysVector3 &normal = object->m_normals[vert]; 
+            const ysVector3 normal = object->m_normals[vert];
 
             WriteFloatToBuffer(normal.x, &location);
             WriteFloatToBuffer(normal.y, &location);
@@ -235,7 +235,7 @@ int ysGeometryExportFile::PackVertexData(ysObjectData *object, int maxBonesPerVe
         }
     
         if (object->m_tangents.IsActive()) {
-            ysVector4 &tangent = object->m_tangents[vert]; 
+            const ysVector4 tangent = object->m_tangents[vert];
 
             WriteFloatToBuffer(tangent.x, &location);
             WriteFloatToBuffer(tangent.y, &location);
@@ -425,8 +425,8 @@ ysError ysGeometryExportFile::WriteObject(ysObjectData *object) {
 
         // Bone Map
         for (int i = 0; i < object->m_boneIndices.GetNumObjects(); ++i) {
-            int *add = &object->m_boneIndices[i];
-            m_file.write((char *)add, sizeof(int));
+            const int add = object->m_boneIndices[i];
+            m_file.write((char *)&add, sizeof(int));
         }
     }
 

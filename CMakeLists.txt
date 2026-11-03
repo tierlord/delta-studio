@@ -7,6 +7,9 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
 project(delta-studio)
 
 set(CMAKE_CXX_STANDARD 11)
+if (NOT WIN32)
+    set(CMAKE_CXX_STANDARD 17)
+endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -66,7 +69,7 @@ find_package(Boost 1.40 COMPONENTS filesystem REQUIRED)
 
 include_directories(dependencies/libraries/stb)
 
-add_library(delta-core STATIC
+set(DELTA_CORE_SOURCES
     # Source files
     src/yds_animation_action.cpp
     src/yds_animation_action_binding.cpp
@@ -310,7 +313,23 @@ add_library(delta-core STATIC
     include/yds_window_system_object.h
 )
 
+if (NOT WIN32)
+    # The Direct3D, DirectSound, Vulkan and Win32 backends are Windows-only.
+    # Linux uses the SDL window/input/audio backends and the OpenGL context
+    # instead, so those sources are swapped out here.
+    list(FILTER DELTA_CORE_SOURCES EXCLUDE REGEX "d3d1[01]|ds8|vulkan|yds_windows_(input|key|monitor|window)|opengl_windows")
+    list(APPEND DELTA_CORE_SOURCES
+        src/yds_sdl_audio.cpp
+        src/yds_sdl_input_system.cpp
+        src/yds_sdl_window.cpp
+        src/yds_sdl_window_system.cpp
+        src/yds_opengl_sdl_context.cpp
+    )
+endif()
 
+add_library(delta-core STATIC ${DELTA_CORE_SOURCES})
+
+if (WIN32)
 target_link_libraries(delta-core PUBLIC
     # SDL
     ${SDL2_LIBRARY}
@@ -322,8 +341,8 @@ target_link_libraries(delta-core PUBLIC
     d3d11
     ${D3DX_LIBS}/d3dx9.lib
     ${D3DX_LIBS}/d3dx9d.lib
-    ${D3DX_LIBS}/d3dx10d.lib
     ${D3DX_LIBS}/d3dx10.lib
+    ${D3DX_LIBS}/d3dx10d.lib
     ${D3DX_LIBS}/d3dx11.lib
     ${D3DX_LIBS}/d3dx11d.lib
     ${D3DX_LIBS}/d3dxof.lib
@@ -345,7 +364,23 @@ target_link_libraries(delta-core PUBLIC
     winmm
     OpenGL32
 )
+else()
+target_link_libraries(delta-core PUBLIC
+    ${SDL2_LIBRARY}
+    ${SDL2_IMAGE_LIBRARIES}
+
+    # Boost
+    Boost::filesystem
+
+    # OpenGL
+    GL
+    dl
+    pthread
+)
+endif()
 
 add_subdirectory(physics)
 add_subdirectory(engines)
-add_subdirectory(demos)
+if (WIN32)
+    add_subdirectory(demos)
+endif()

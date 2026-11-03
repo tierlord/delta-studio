@@ -59,7 +59,6 @@ void ysLogger::End() {
 }
 
 ysLoggerMessageLevel::ysLoggerMessageLevel() {
-    ysLoggerMessageLevel::ysLoggerMessageLevel("", -1);
     m_valid = false;
 }
 
